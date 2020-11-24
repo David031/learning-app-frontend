@@ -1,0 +1,8 @@
+query dynasties{
+    dynasties{
+        id
+        code
+        dynastyName
+
+    }
+}

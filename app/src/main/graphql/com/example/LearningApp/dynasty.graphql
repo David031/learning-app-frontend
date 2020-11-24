@@ -1,0 +1,11 @@
+query Dynasty($where: DynastyWhereUniqueInput!) {
+    dynasty(where: $where) {
+        id
+        code
+        dynastyName
+        idioms{
+            idiom
+            description
+        }
+    }
+}
