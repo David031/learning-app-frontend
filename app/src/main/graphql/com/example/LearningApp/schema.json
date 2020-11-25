@@ -9773,6 +9773,11 @@
           "description" : null,
           "isDeprecated" : false,
           "deprecationReason" : null
+        }, {
+          "name" : "Not_Finish",
+          "description" : null,
+          "isDeprecated" : false,
+          "deprecationReason" : null
         } ],
         "fields" : null,
         "kind" : "ENUM",

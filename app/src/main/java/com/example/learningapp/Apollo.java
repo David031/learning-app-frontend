@@ -11,7 +11,14 @@ import android.util.Log;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.rx3.Rx3Apollo;
+import com.example.LearningApp.UserQuery;
+import com.example.LearningApp.type.UserWhereUniqueInput;
+
+import java.util.Objects;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
@@ -20,36 +27,58 @@ public class Apollo {
             .serverUrl("http://192.168.1.88:4466")
             .build();
 
+    Context context;
+    Activity activity;
+
+    public Apollo(Context context,Activity activity) {
+        this.context = context;
+        this.activity = activity;
+    }
+
     public ApolloClient getApolloClient() {
         return apolloClient;
     }
 
-    public boolean isNetworkAvailable( Context context) {
+    public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    public void checkIsLoginWithAction(Context context , Activity activity){
-        String email = getDefaults("email",context);
-        Log.i("Log Apollo",""+email);
-        if(email == null){
-            NavController navController = Navigation.findNavController(activity,R.id.main_nav_host_fragment);
+
+    public void checkIsLoginWithAction() {
+        String email = getDefaults("email");
+        Log.i("Log Apollo", "" + email);
+        if (email == null) {
+            NavController navController = Navigation.findNavController(activity, R.id.main_nav_host_fragment);
             navController.navigate(R.id.loginFragment);
         }
     }
-    public boolean isLogin(Context context ){
-        String email = getDefaults("email",context);
+
+    public boolean isLogin() {
+        String email = getDefaults("email");
         return email != null;
     }
-    public  void setDefaults(String key, String value, Context context) {
+
+    public void setDefaults(String key, String value) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(key, value);
         editor.commit();
     }
-    public  String getDefaults(String key, Context context) {
+
+    public String getDefaults(String key) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, null);
+    }
+
+    public UserQuery.User getUser(){
+        String email = getDefaults("email");
+        UserWhereUniqueInput where = UserWhereUniqueInput.builder().email(email).build();
+        UserQuery query = UserQuery.builder().where(where).build();
+        ApolloCall<UserQuery.Data> apolloCall = getApolloClient().query(query);
+        Response<UserQuery.Data> response = Rx3Apollo.from(apolloCall).blockingFirst();
+        UserQuery.User user = Objects.requireNonNull(response.getData()).user();
+        return user;
     }
 }

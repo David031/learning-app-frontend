@@ -1,0 +1,13 @@
+query Level($where: LevelWhereUniqueInput!){
+    level(where:$where){
+        code
+        name
+        idioms{
+            idiom
+            description
+        }
+        dynasty{
+            dynastyName
+        }
+    }
+}

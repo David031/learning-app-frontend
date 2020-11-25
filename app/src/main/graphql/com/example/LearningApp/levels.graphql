@@ -2,11 +2,15 @@ query Levels{
     levels{
         id
         name
+        code
         dynasty {
             dynastyName
         }
-        idioms {
-            idiom
+        records{
+            user{
+                email
+            }
+            status
         }
     }
 }

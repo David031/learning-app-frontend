@@ -33,20 +33,15 @@ public class ProfileFragment extends Fragment {
         TextView emailTextView = root.findViewById(R.id.fragment_profile_email_textView);
         TextView nameTextView = root.findViewById(R.id.fragment_profile_name_textView);
         Button logoutButton = root.findViewById(R.id.fragment_profile_logout_button);
-        Apollo apollo = new Apollo();
-        apollo.checkIsLoginWithAction(requireContext(),requireActivity());
+        Apollo apollo = new Apollo(requireContext(),requireActivity());
+        apollo.checkIsLoginWithAction();
         textView.setText("我的");
-        if (apollo.isNetworkAvailable(requireContext())){
-            String email = apollo.getDefaults("email",requireContext());
-            UserWhereUniqueInput where = UserWhereUniqueInput.builder().email(email).build();
-            UserQuery query = UserQuery.builder().where(where).build();
-            ApolloCall<UserQuery.Data> apolloCall = apollo.getApolloClient().query(query);
-            Response<UserQuery.Data> response = Rx3Apollo.from(apolloCall).blockingFirst();
-            UserQuery.User user = Objects.requireNonNull(response.getData()).user();
+        if (apollo.isNetworkAvailable()){
+            UserQuery.User user = apollo.getUser();
             emailTextView.setText(user.email());
             nameTextView.setText(user.name());
             logoutButton.setOnClickListener(v -> {
-                apollo.setDefaults("email",null,requireContext());
+                apollo.setDefaults("email",null);
                 requireActivity().recreate();
                 NavController navController = Navigation.findNavController(requireActivity(),R.id.main_nav_host_fragment);
                 navController.navigate(R.id.loginFragment);

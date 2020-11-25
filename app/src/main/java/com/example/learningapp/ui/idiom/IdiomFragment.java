@@ -37,12 +37,12 @@ public class IdiomFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_idiom, container, false);
         TextView textView = root.findViewById(R.id.fragment_idiom_textview);
         LinearLayout linearLayout = root.findViewById(R.id.fragment_idiom_scrollView_layout);
-        Apollo apollo = new Apollo();
-        apollo.checkIsLoginWithAction(requireContext(),requireActivity());
+        Apollo apollo = new Apollo(requireContext(),requireActivity());
+        apollo.checkIsLoginWithAction();
         if (getArguments() != null) {
             IdiomFragmentArgs fragmentArgs = IdiomFragmentArgs.fromBundle(getArguments());
             String dynastyCode = fragmentArgs.getDynastyCode();
-            if(apollo.isNetworkAvailable(requireContext())){
+            if(apollo.isNetworkAvailable()){
                 DynastyWhereUniqueInput where = DynastyWhereUniqueInput.builder().code(dynastyCode).build();
                 DynastyQuery dynastyQuery =  DynastyQuery.builder().where(where).build();
                 ApolloCall<DynastyQuery.Data> apolloCall = apollo.getApolloClient().query(dynastyQuery);

@@ -19,7 +19,11 @@
         android:id="@+id/navigation_level"
         android:name="com.example.learningapp.ui.level.LevelFragment"
         android:label="@string/title_level"
-        tools:layout="@layout/fragment_level" />
+        tools:layout="@layout/fragment_level" >
+        <action
+            android:id="@+id/action_navigation_level_to_gameFragment"
+            app:destination="@id/gameFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
@@ -40,5 +44,13 @@
         android:name="com.example.learningapp.ui.login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.example.learningapp.ui.game.GameFragment"
+        android:label="GameFragment" >
+        <argument
+            android:name="levelCode"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>

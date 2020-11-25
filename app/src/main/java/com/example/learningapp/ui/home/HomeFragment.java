@@ -32,12 +32,12 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.fragment_home_textView);
-        Apollo apollo = new Apollo();
-        apollo.checkIsLoginWithAction(requireContext(),requireActivity());
+        Apollo apollo = new Apollo(requireContext(), requireActivity());
+        apollo.checkIsLoginWithAction();
         textView.setText("成語學習");
         LinearLayout linearLayout = root.findViewById(R.id.fragment_home_scrollView_layout);
 
-        if (apollo.isNetworkAvailable(requireContext())){
+        if (apollo.isNetworkAvailable()) {
             ApolloCall<DynastiesQuery.Data> apolloCall = apollo.getApolloClient().query(new DynastiesQuery());
             Response<DynastiesQuery.Data> response = Rx3Apollo.from(apolloCall).onErrorComplete().blockingFirst();
             List<DynastiesQuery.Dynasty> dynasties = Objects.requireNonNull(response.getData()).dynasties();
@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
             });
 
             Log.i("Apollo", "Data: " + response);
-        }else{
+        } else {
             textView.setText("請檢查網絡連接");
         }
 
@@ -81,12 +81,9 @@ public class HomeFragment extends Fragment {
         cardLinearLayout.addView(addTitleTextView(title, view));
         cardLinearLayout.addView(addContentTextView(content, view));
         cardView.setClickable(true);
-        cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HomeFragmentDirections.ActionNavigationHomeToIdiomFragment action = HomeFragmentDirections.actionNavigationHomeToIdiomFragment(dynastyCode);
-                Navigation.findNavController(view).navigate(action);
-            }
+        cardView.setOnClickListener(v -> {
+            HomeFragmentDirections.ActionNavigationHomeToIdiomFragment action = HomeFragmentDirections.actionNavigationHomeToIdiomFragment(dynastyCode);
+            Navigation.findNavController(view).navigate(action);
         });
         linearLayout.addView(cardView);
     }

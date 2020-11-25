@@ -43,11 +43,8 @@ public class LoginFragment extends Fragment {
         ConstraintLayout mainLayout = root.findViewById(R.id.fragment_login_main_layout);
         TextView textView = root.findViewById(R.id.fragment_login_textView);
 
-        ConstraintLayout nameConstraintLayout = root.findViewById(R.id.fragment_login_name_layout);
-        ConstraintLayout emailConstraintLayout = root.findViewById(R.id.fragment_login_email_layout);
-
-        Apollo apollo = new Apollo();
-        if (apollo.isNetworkAvailable(requireContext())) {
+        Apollo apollo = new Apollo(requireContext(),requireActivity());
+        if (apollo.isNetworkAvailable()) {
             textView.setText("登入/註冊");
             EditText nameEditText = root.findViewById(R.id.fragment_login_name_editText);
             EditText emailEditText = root.findViewById(R.id.fragment_login_email_editText);
@@ -68,8 +65,8 @@ public class LoginFragment extends Fragment {
                     if(user == null){
                         snackbar.setText("用戶不存在！請先註冊！").show();
                     }else{
-                        apollo.setDefaults("email",email,requireContext());
-                        String prefEmail =  apollo.getDefaults("email",requireContext());
+                        apollo.setDefaults("email",email);
+                        String prefEmail =  apollo.getDefaults("email");
                         Log.i("Log",""+prefEmail);
                         requireActivity().recreate();
                         NavController navController = Navigation.findNavController(requireActivity(),R.id.main_nav_host_fragment);
@@ -109,8 +106,8 @@ public class LoginFragment extends Fragment {
                             Response<CreateUserMutation.Data> createUserResponse = Rx3Apollo.from(apolloCreateUserCall).blockingFirst();
                             CreateUserMutation.CreateUser createUser =  Objects.requireNonNull(createUserResponse.getData()).createUser();
 
-                            apollo.setDefaults("email",email,requireContext());
-                            String prefEmail =  apollo.getDefaults("email",requireContext());
+                            apollo.setDefaults("email",email);
+                            String prefEmail =  apollo.getDefaults("email");
                             Log.i("Log",""+prefEmail);
                             requireActivity().recreate();
                             NavController navController = Navigation.findNavController(requireActivity(),R.id.main_nav_host_fragment);
