@@ -1,12 +1,19 @@
 package com.example.learningapp.ui.game;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.apollographql.apollo.ApolloCall;
@@ -18,6 +25,7 @@ import com.example.LearningApp.type.LevelWhereUniqueInput;
 import com.example.learningapp.Apollo;
 import com.example.learningapp.R;
 import com.example.learningapp.ui.idiom.IdiomFragmentArgs;
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +52,7 @@ public class GameFragment extends Fragment {
                 ArrayList<String> selectedChars = new ArrayList<String>();
 
                 questionTextView.setText(getQuestionPlaceholder(selectedChars, currentIdiom.length()));
-
+                addAnsView(root, currentIdiom);
 
             } else {
                 textView.setText("請檢查網絡連接");
@@ -54,9 +62,40 @@ public class GameFragment extends Fragment {
         return root;
 
     }
-    private  void addAnsView(View view){
+
+    private void checkIsNext() {
 
     }
+
+    private void addAnsView(View view, String idiom) {
+        FlexboxLayout flexboxLayout = view.findViewById(R.id.fragment_game_ans_layout);
+
+        for (int i = 0; i < idiom.length(); i++) {
+            CardView cardView = new CardView(view.getContext());
+            TextView textView = new TextView(view.getContext());
+            String currentChar = String.valueOf(idiom.charAt(i));
+            cardView.setLayoutParams(new CardView.LayoutParams(190, 190));
+            cardView.setContentPadding(10, 10, 10, 10);
+            cardView.setPadding(10, 10, 10, 10);
+            cardView.setElevation(10);
+            cardView.setUseCompatPadding(true);
+            textView.setText(String.valueOf(idiom.charAt(i)));
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            textView.setTextSize(20);
+            cardView.addView(textView);
+            textView.setClickable(true);
+            textView.setOnClickListener(v -> {
+                    Log.i("Log", currentChar);
+                    Log.i("Log", currentChar);
+                    Log.i("Log", currentChar);
+                }
+            );
+            flexboxLayout.addView(cardView);
+        }
+
+    }
+
     private String getQuestionPlaceholder(ArrayList<String> selectedChars, int idiomLength) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < selectedChars.size(); i++) {

@@ -33,6 +33,7 @@ android {
 
 
 dependencies {
+    implementation 'com.google.android:flexbox:2.0.1'
     implementation 'com.apollographql.apollo:apollo-rx3-support:2.4.5'
     implementation("com.apollographql.apollo:apollo-runtime:2.4.5")
     implementation 'androidx.appcompat:appcompat:1.2.0'
