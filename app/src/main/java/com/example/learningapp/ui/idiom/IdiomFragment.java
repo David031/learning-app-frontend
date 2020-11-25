@@ -18,6 +18,7 @@ import androidx.navigation.Navigation;
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.example.LearningApp.DynastiesQuery;
 import com.example.LearningApp.DynastyQuery;
 import com.example.LearningApp.type.DynastyWhereUniqueInput;
@@ -28,6 +29,7 @@ import com.example.learningapp.ui.home.HomeFragmentDirections;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class IdiomFragment extends Fragment {
 
@@ -35,33 +37,29 @@ public class IdiomFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_idiom, container, false);
         TextView textView = root.findViewById(R.id.fragment_idiom_textview);
         LinearLayout linearLayout = root.findViewById(R.id.fragment_idiom_scrollView_layout);
+        Apollo apollo = new Apollo();
+        apollo.checkIsLoginWithAction(requireContext(),requireActivity());
         if (getArguments() != null) {
             IdiomFragmentArgs fragmentArgs = IdiomFragmentArgs.fromBundle(getArguments());
             String dynastyCode = fragmentArgs.getDynastyCode();
-            Apollo apollo = new Apollo();
-            DynastyWhereUniqueInput where = DynastyWhereUniqueInput.builder().code(dynastyCode).build();
-            DynastyQuery dynastyQuery =  DynastyQuery.builder().where(where).build();
-            apollo.getApolloClient().query(dynastyQuery).enqueue((new ApolloCall.Callback<DynastyQuery.Data>() {
-                @Override
-                public void onResponse(@NotNull Response<DynastyQuery.Data> response) {
-                    DynastyQuery.Dynasty dynasty = response.getData().dynasty();
-                    List<DynastyQuery.Idiom> idioms = dynasty.idioms();
-                    Log.i("Apollo", "Data: " + dynasty);
+            if(apollo.isNetworkAvailable(requireContext())){
+                DynastyWhereUniqueInput where = DynastyWhereUniqueInput.builder().code(dynastyCode).build();
+                DynastyQuery dynastyQuery =  DynastyQuery.builder().where(where).build();
+                ApolloCall<DynastyQuery.Data> apolloCall = apollo.getApolloClient().query(dynastyQuery);
+                Response<DynastyQuery.Data> response = Rx3Apollo.from(apolloCall).blockingFirst();
+                DynastyQuery.Dynasty dynasty = Objects.requireNonNull(response.getData()).dynasty();
+                List<DynastyQuery.Idiom> idioms = dynasty.idioms();
+                Log.i("Apollo", "Data: " + dynasty);
 
-                    getActivity().runOnUiThread(() -> {
-                        textView.setText(dynasty.dynastyName());
-                        for (int i = 0; i < idioms.size(); i++) {
-                            addCardView(linearLayout, idioms.get(i).idiom(),idioms.get(i).description(),  root);
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(@NotNull ApolloException e) {
-                    Log.e("Apollo", "Error", e);
-                }
-            }));
-
+                getActivity().runOnUiThread(() -> {
+                    textView.setText(dynasty.dynastyName());
+                    for (int i = 0; i < idioms.size(); i++) {
+                        addCardView(linearLayout, idioms.get(i).idiom(),idioms.get(i).description(),  root);
+                    }
+                });
+            }else{
+                textView.setText("請檢查網絡連接");
+            }
         }
 
         return root;

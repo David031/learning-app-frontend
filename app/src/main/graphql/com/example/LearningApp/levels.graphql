@@ -1,0 +1,12 @@
+query Levels{
+    levels{
+        id
+        name
+        dynasty {
+            dynastyName
+        }
+        idioms {
+            idiom
+        }
+    }
+}

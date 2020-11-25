@@ -2,12 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_login_main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.profile.ProfileFragment">
+    tools:context=".ui.login.LoginFragment">
 
     <TextView
-        android:id="@+id/fragment_profile_textView"
+        android:id="@+id/fragment_login_textView"
         android:layout_width="323dp"
         android:layout_height="wrap_content"
         android:textAlignment="viewStart"
@@ -18,21 +19,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.06" />
 
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_baseline_account_circle_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.158" />
-
     <androidx.cardview.widget.CardView
-        android:id="@+id/fragment_profile_name_cardView"
+        android:id="@+id/fragment_login_name_cardView"
         android:layout_width="900px"
         android:layout_height="250px"
         android:elevation="10px"
@@ -42,15 +30,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.369">
+        app:layout_constraintVertical_bias="0.328">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/fragment_profile_name_layout"
+            android:id="@+id/fragment_login_name_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/fragment_profile_name_textViewLable"
+                android:id="@+id/fragment_login_name_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="8px"
@@ -62,26 +50,29 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.120000005" />
 
-            <TextView
-                android:id="@+id/fragment_profile_name_textView"
+            <EditText
+                android:id="@+id/fragment_login_name_editText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="8px"
-                android:text="David"
-                android:textSize="24dp"
+                android:backgroundTint="#979797"
+                android:ems="10"
+                android:hint="暱稱"
+                android:importantForAutofill="no"
+                android:inputType="textEmailAddress"
+                android:outlineProvider="bounds"
+                android:padding="24px"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.05"
+                app:layout_constraintHorizontal_bias="0.1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.9" />
-
+                app:layout_constraintVertical_bias="0.8" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/fragment_profile_email_cardView"
+        android:id="@+id/fragment_login_email_cardView"
         android:layout_width="900px"
         android:layout_height="250px"
         android:elevation="10px"
@@ -90,20 +81,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.55">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/fragment_profile_email_layout"
+            android:id="@+id/fragment_login_email_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/fragment_profile_email_textViewLable"
+                android:id="@+id/fragment_login_email_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="8px"
-                android:text="電子郵箱"
+                android:text="電子郵件"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.05"
@@ -111,33 +101,51 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.120000005" />
 
-            <TextView
-                android:id="@+id/fragment_profile_email_textView"
+            <EditText
+                android:id="@+id/fragment_login_email_editText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="8px"
-                android:text="david@gmail.com"
-                android:textSize="24dp"
+                android:backgroundTint="#979797"
+                android:ems="10"
+                android:hint="電子郵件"
+                android:inputType="textPersonName"
+                android:outlineProvider="paddedBounds"
+                android:padding="24px"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.9" />
-
+                app:layout_constraintVertical_bias="0.8" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 
     <Button
-        android:id="@+id/fragment_profile_logout_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="登出"
-        android:textColor="#FF0000"
+        android:id="@+id/fragment_login_loginButton"
+        android:layout_width="148dp"
+        android:layout_height="55dp"
+        android:background="@android:color/background_light"
+        android:text="登入"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.167"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.74" />
+        app:layout_constraintVertical_bias="0.699"
+        app:rippleColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/fragment_login_SignUpButton"
+        android:layout_width="148dp"
+        android:layout_height="55dp"
+        android:background="#656565"
+        android:text="註冊"
+        android:textColor="@android:color/background_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.832"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.699" />
 </androidx.constraintlayout.widget.ConstraintLayout>

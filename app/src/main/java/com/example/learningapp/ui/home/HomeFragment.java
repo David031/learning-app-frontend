@@ -1,5 +1,6 @@
 package com.example.learningapp.ui.home;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -13,47 +14,43 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.example.LearningApp.DynastiesQuery;
 import com.example.learningapp.Apollo;
 import com.example.learningapp.R;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
-
-    private HomeViewModel homeViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.fragment_home_textView);
+        Apollo apollo = new Apollo();
+        apollo.checkIsLoginWithAction(requireContext(),requireActivity());
         textView.setText("成語學習");
         LinearLayout linearLayout = root.findViewById(R.id.fragment_home_scrollView_layout);
-        Apollo apollo = new Apollo();
-        apollo.getApolloClient().query(new DynastiesQuery()).enqueue((new ApolloCall.Callback<DynastiesQuery.Data>() {
-            @Override
-            public void onResponse(@NotNull Response<DynastiesQuery.Data> response) {
-                List<DynastiesQuery.Dynasty> dynasties = response.getData().dynasties();
-                Log.i("Apollo", "Data: " + dynasties);
-                getActivity().runOnUiThread(() -> {
-                    for (int i = 0; i < dynasties.size(); i++) {
-                        addCardView(linearLayout, dynasties.get(i).dynastyName(),"成語",dynasties.get(i).code(),  root);
-                    }
-                });
-            }
 
-            @Override
-            public void onFailure(@NotNull ApolloException e) {
-                Log.e("Apollo", "Error", e);
-            }
-        }));
+        if (apollo.isNetworkAvailable(requireContext())){
+            ApolloCall<DynastiesQuery.Data> apolloCall = apollo.getApolloClient().query(new DynastiesQuery());
+            Response<DynastiesQuery.Data> response = Rx3Apollo.from(apolloCall).onErrorComplete().blockingFirst();
+            List<DynastiesQuery.Dynasty> dynasties = Objects.requireNonNull(response.getData()).dynasties();
+            requireActivity().runOnUiThread(() -> {
+                for (int i = 0; i < dynasties.size(); i++) {
+                    addCardView(linearLayout, dynasties.get(i).dynastyName(), "成語", dynasties.get(i).code(), root);
+                }
+            });
 
+            Log.i("Apollo", "Data: " + response);
+        }else{
+            textView.setText("請檢查網絡連接");
+        }
 
         return root;
 
@@ -104,7 +101,7 @@ public class HomeFragment extends Fragment {
     private TextView addContentTextView(String content, View view) {
         TextView textView = new TextView(view.getContext());
         textView.setText(content);
-        textView.setPadding(0,16,0,0);
+        textView.setPadding(0, 16, 0, 0);
         return textView;
     }
 
