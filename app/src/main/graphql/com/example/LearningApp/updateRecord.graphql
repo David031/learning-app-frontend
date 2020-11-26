@@ -1,0 +1,5 @@
+mutation UpdateRecord($data:RecordUpdateInput!,$where: RecordWhereUniqueInput!){
+    updateRecord(data:$data,where:$where){
+        status
+    }
+}

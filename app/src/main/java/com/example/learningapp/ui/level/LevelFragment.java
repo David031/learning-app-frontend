@@ -47,7 +47,7 @@ public class LevelFragment extends Fragment {
             Log.d("Apollo", levels + "");
             requireActivity().runOnUiThread(() -> {
                 for (int i = 0; i < levels.size(); i++) {
-                    boolean isUnlocked = levels.get(i).code() == user.maxUnlockedLevel().code();
+                    boolean isUnlocked = levels.get(i).code() <= user.maxUnlockedLevel().code();
                     LevelsQuery.Level level = levels.get(i);
                     List<LevelsQuery.Record> records = level.records();
                     RecordStatus recordStatus = RecordStatus.NOT_FINISH;

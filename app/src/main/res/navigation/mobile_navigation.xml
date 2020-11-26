@@ -51,6 +51,26 @@
         <argument
             android:name="levelCode"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_gameFragment_to_resultFragment"
+            app:destination="@id/resultFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.example.learningapp.ui.result.ResultFragment"
+        android:label="ResultFragment" >
+        <action
+            android:id="@+id/action_resultFragment_to_navigation_level"
+            app:destination="@id/navigation_level" />
+        <argument
+            android:name="correctCount"
+            app:argType="integer" />
+        <argument
+            android:name="levelCode"
+            app:argType="integer" />
+        <argument
+            android:name="levelName"
+            app:argType="string" />
     </fragment>
 
 </navigation>

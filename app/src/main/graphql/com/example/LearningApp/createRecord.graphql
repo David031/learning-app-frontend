@@ -1,0 +1,5 @@
+mutation CreateRecord($data:RecordCreateInput!){
+    createRecord(data:$data){
+        status
+    }
+}

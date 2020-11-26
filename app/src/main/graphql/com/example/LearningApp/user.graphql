@@ -5,5 +5,11 @@ query User($where: UserWhereUniqueInput!){
         maxUnlockedLevel{
             code
         }
+        records{
+            id
+            level{
+                code
+            }
+        }
     }
 }
