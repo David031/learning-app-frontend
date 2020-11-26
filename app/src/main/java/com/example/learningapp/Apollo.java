@@ -22,7 +22,7 @@ import java.util.Objects;
 
 public class Apollo {
     ApolloClient apolloClient = ApolloClient.builder()
-            .serverUrl("http://192.168.1.88:4466")
+            .serverUrl("http://dxdev.myds.me:1234")
             .build();
 
     Context context;
