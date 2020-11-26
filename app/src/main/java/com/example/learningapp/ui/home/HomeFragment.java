@@ -1,8 +1,6 @@
 package com.example.learningapp.ui.home;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.apollographql.apollo.ApolloCall;
@@ -47,7 +44,6 @@ public class HomeFragment extends Fragment {
                 }
             });
 
-            Log.i("Apollo", "Data: " + response);
         } else {
             textView.setText("請檢查網絡連接");
         }

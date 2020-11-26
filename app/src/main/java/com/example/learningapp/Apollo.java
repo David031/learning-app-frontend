@@ -20,8 +20,6 @@ import com.example.LearningApp.type.UserWhereUniqueInput;
 
 import java.util.Objects;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 public class Apollo {
     ApolloClient apolloClient = ApolloClient.builder()
             .serverUrl("http://192.168.1.88:4466")
@@ -30,7 +28,7 @@ public class Apollo {
     Context context;
     Activity activity;
 
-    public Apollo(Context context,Activity activity) {
+    public Apollo(Context context, Activity activity) {
         this.context = context;
         this.activity = activity;
     }
@@ -48,7 +46,6 @@ public class Apollo {
 
     public void checkIsLoginWithAction() {
         String email = getDefaults("email");
-        Log.i("Log Apollo", "" + email);
         if (email == null) {
             NavController navController = Navigation.findNavController(activity, R.id.main_nav_host_fragment);
             navController.navigate(R.id.loginFragment);
@@ -72,7 +69,7 @@ public class Apollo {
         return preferences.getString(key, null);
     }
 
-    public UserQuery.User getUser(){
+    public UserQuery.User getUser() {
         String email = getDefaults("email");
         UserWhereUniqueInput where = UserWhereUniqueInput.builder().email(email).build();
         UserQuery query = UserQuery.builder().where(where).build();

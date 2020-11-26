@@ -1,48 +1,35 @@
 package com.example.learningapp.ui.game;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx3.Rx3Apollo;
-import com.example.LearningApp.DynastyQuery;
 import com.example.LearningApp.LevelQuery;
 import com.example.LearningApp.type.LevelWhereUniqueInput;
 import com.example.learningapp.Apollo;
 import com.example.learningapp.R;
-import com.example.learningapp.ui.idiom.IdiomFragmentArgs;
-import com.example.learningapp.ui.level.LevelFragmentDirections;
-import com.example.learningapp.ui.result.ResultFragmentDirections;
 import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 
 public class GameFragment extends Fragment {
@@ -71,7 +58,6 @@ public class GameFragment extends Fragment {
             GameFragmentArgs fragmentArgs = GameFragmentArgs.fromBundle(getArguments());
             levelCode = fragmentArgs.getLevelCode();
             if (apollo.isNetworkAvailable()) {
-
                 LevelQuery.Level level = getLevel(apollo, levelCode);
                 levelName = level.name();
                 textView.setText(level.name());
@@ -99,6 +85,7 @@ public class GameFragment extends Fragment {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         progressBar.setProgress(10000 - Math.toIntExact(millisUntilFinished));
+
                     }
 
                     @Override
@@ -116,18 +103,20 @@ public class GameFragment extends Fragment {
         return root;
 
     }
-    private String shuffle(String input){
+
+    private String shuffle(String input) {
         List<Character> characters = new ArrayList<Character>();
-        for(char c:input.toCharArray()){
+        for (char c : input.toCharArray()) {
             characters.add(c);
         }
         StringBuilder output = new StringBuilder(input.length());
-        while(characters.size()!=0){
-            int randPicker = (int)(Math.random()*characters.size());
+        while (characters.size() != 0) {
+            int randPicker = (int) (Math.random() * characters.size());
             output.append(characters.remove(randPicker));
         }
-        return  output.toString();
+        return output.toString();
     }
+
     private void showTips(View view, String description) {
         PopUpClass popUpClass = new PopUpClass();
         popUpClass.showPopupWindow(view, description);
@@ -141,8 +130,8 @@ public class GameFragment extends Fragment {
         for (String s : selectedChars) {
             checkString.append(s);
         }
-        Log.i("Correct Ans",currentIdiom);
-        Log.i("Yout Ans",checkString.toString());
+        Log.i("Correct Ans ", currentIdiom);
+        Log.i("Your Ans ", checkString.toString());
         if (currentIdiom.equals(checkString.toString())) {
             imageView.setImageResource(R.drawable.ic_baseline_check_24);
             correctCount += 1;
@@ -152,10 +141,13 @@ public class GameFragment extends Fragment {
         timer.cancel();
         progressBar.setProgress(0);
         if (questionIndex >= 4) {
-            Log.i("Log", "GameEnd");
             Runnable gameEndRender = () -> {
-                GameFragmentDirections.ActionGameFragmentToResultFragment action = GameFragmentDirections.actionGameFragmentToResultFragment(correctCount, levelCode, levelName);
-                Navigation.findNavController(view).navigate(action);
+                Activity activity = getActivity();
+                if (activity != null && isAdded()) {
+                    GameFragmentDirections.ActionGameFragmentToResultFragment action = GameFragmentDirections.actionGameFragmentToResultFragment(correctCount, levelCode, levelName);
+                    Navigation.findNavController(view).navigate(action);
+                }
+
             };
             handler.postDelayed(gameEndRender, 2000);
         } else {
@@ -203,9 +195,7 @@ public class GameFragment extends Fragment {
                         textView.setClickable(false);
                         flexboxLayout.removeView(cardView);
                         questionTextView.setText(getQuestionPlaceholder(selectedChars, shuffledIdiom.length()));
-                        Log.i("OnClick", "NextChar");
                         if (selectedChars.size() == currentIdiom.length()) {
-                            Log.i("OnClick", "NextQuestion");
                             checkIsNextQuestion(view);
                         }
                     }

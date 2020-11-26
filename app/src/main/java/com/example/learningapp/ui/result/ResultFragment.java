@@ -1,7 +1,6 @@
 package com.example.learningapp.ui.result;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,35 +16,26 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import com.apollographql.apollo.ApolloCall;
-import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.example.LearningApp.CreateRecordMutation;
-import com.example.LearningApp.CreateUserMutation;
 import com.example.LearningApp.LevelsQuery;
 import com.example.LearningApp.UpdateRecordMutation;
 import com.example.LearningApp.UpdateUserMutation;
 import com.example.LearningApp.UserQuery;
-import com.example.LearningApp.type.LevelCreateOneInput;
 import com.example.LearningApp.type.LevelCreateOneWithoutRecordsInput;
-import com.example.LearningApp.type.LevelCreateWithoutRecordsInput;
 import com.example.LearningApp.type.LevelUpdateOneRequiredInput;
 import com.example.LearningApp.type.LevelWhereUniqueInput;
 import com.example.LearningApp.type.RecordCreateInput;
-import com.example.LearningApp.type.RecordCreateWithoutUserInput;
 import com.example.LearningApp.type.RecordStatus;
 import com.example.LearningApp.type.RecordUpdateInput;
-import com.example.LearningApp.type.RecordUpdateManyWithoutUserInput;
 import com.example.LearningApp.type.RecordWhereUniqueInput;
 import com.example.LearningApp.type.UserCreateOneWithoutRecordsInput;
 import com.example.LearningApp.type.UserUpdateInput;
 import com.example.LearningApp.type.UserWhereUniqueInput;
 import com.example.learningapp.Apollo;
 import com.example.learningapp.R;
-import com.example.learningapp.ui.idiom.IdiomFragmentArgs;
-import com.example.learningapp.ui.level.LevelFragmentDirections;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,12 +57,12 @@ public class ResultFragment extends Fragment {
                 if (oldRecord == null) {
                     CreateRecordMutation.CreateRecord createRecord = createRecordByLevel(correctCount, levelCode, apollo);
                     if (correctCount >= 3) {
-                        UpdateUserMutation.UpdateUser updateUser = updateUserMaxLevel(apollo);
+                        UpdateUserMutation.UpdateUser updateUser = updateUserMaxLevel(apollo, levelCode);
                     }
                 } else {
                     UserQuery.MaxUnlockedLevel level = apollo.getUser().maxUnlockedLevel();
-                    if (level.code() == levelCode && correctCount >=  3) {
-                        UpdateUserMutation.UpdateUser updateUser = updateUserMaxLevel(apollo);
+                    if (level.code() == levelCode && correctCount >= 3) {
+                        UpdateUserMutation.UpdateUser updateUser = updateUserMaxLevel(apollo, levelCode);
                     }
                     UpdateRecordMutation.UpdateRecord updateRecord = updateRecord(getRecordStatus(correctCount), oldRecord.id(), apollo);
                 }
@@ -158,19 +148,26 @@ public class ResultFragment extends Fragment {
         return result;
     }
 
-    private UpdateUserMutation.UpdateUser updateUserMaxLevel(Apollo apollo) {
-        String email = apollo.getDefaults("email");
-        UserQuery.User user = apollo.getUser();
-        UserQuery.MaxUnlockedLevel level = user.maxUnlockedLevel();
-        LevelWhereUniqueInput levelWhereUniqueInput = LevelWhereUniqueInput.builder().code(level.code() + 1).build();
-        LevelUpdateOneRequiredInput levelUpdateOneRequiredInput = LevelUpdateOneRequiredInput.builder().connect(levelWhereUniqueInput).build();
-        UserUpdateInput data = UserUpdateInput.builder().maxUnlockedLevel(levelUpdateOneRequiredInput).build();
-        UserWhereUniqueInput where = UserWhereUniqueInput.builder().email(email).build();
-        UpdateUserMutation mutation = UpdateUserMutation.builder().data(data).where(where).build();
+    private UpdateUserMutation.UpdateUser updateUserMaxLevel(Apollo apollo, int levelCode) {
+        ApolloCall<LevelsQuery.Data> levelApolloCall = apollo.getApolloClient().query(new LevelsQuery());
+        Response<LevelsQuery.Data> levelResponse = Rx3Apollo.from(levelApolloCall).blockingFirst();
+        List<LevelsQuery.Level> levels = Objects.requireNonNull(levelResponse.getData()).levels();
+        if (levelCode < levels.size()) {
 
-        ApolloCall<UpdateUserMutation.Data> apolloCall = apollo.getApolloClient().mutate(mutation);
-        Response<UpdateUserMutation.Data> response = Rx3Apollo.from(apolloCall).blockingFirst();
-        return Objects.requireNonNull(response.getData()).updateUser();
+            String email = apollo.getDefaults("email");
+            UserQuery.User user = apollo.getUser();
+            UserQuery.MaxUnlockedLevel level = user.maxUnlockedLevel();
+            LevelWhereUniqueInput levelWhereUniqueInput = LevelWhereUniqueInput.builder().code(level.code() + 1).build();
+            LevelUpdateOneRequiredInput levelUpdateOneRequiredInput = LevelUpdateOneRequiredInput.builder().connect(levelWhereUniqueInput).build();
+            UserUpdateInput data = UserUpdateInput.builder().maxUnlockedLevel(levelUpdateOneRequiredInput).build();
+            UserWhereUniqueInput where = UserWhereUniqueInput.builder().email(email).build();
+            UpdateUserMutation mutation = UpdateUserMutation.builder().data(data).where(where).build();
+
+            ApolloCall<UpdateUserMutation.Data> apolloCall = apollo.getApolloClient().mutate(mutation);
+            Response<UpdateUserMutation.Data> response = Rx3Apollo.from(apolloCall).blockingFirst();
+            return Objects.requireNonNull(response.getData()).updateUser();
+        }
+        return null;
     }
 
     private CreateRecordMutation.CreateRecord createRecordByLevel(int correctCount, int levelCode, Apollo apollo) {

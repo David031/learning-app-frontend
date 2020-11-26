@@ -44,7 +44,6 @@ public class LevelFragment extends Fragment {
             Response<LevelsQuery.Data> levelResponse = Rx3Apollo.from(levelApolloCall).blockingFirst();
             List<LevelsQuery.Level> levels = Objects.requireNonNull(levelResponse.getData()).levels();
             UserQuery.User user = apollo.getUser();
-            Log.d("Apollo", levels + "");
             requireActivity().runOnUiThread(() -> {
                 for (int i = 0; i < levels.size(); i++) {
                     boolean isUnlocked = levels.get(i).code() <= user.maxUnlockedLevel().code();

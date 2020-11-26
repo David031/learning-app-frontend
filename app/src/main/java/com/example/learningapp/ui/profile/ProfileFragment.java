@@ -8,22 +8,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.apollographql.apollo.ApolloCall;
-import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.example.LearningApp.UserQuery;
-import com.example.LearningApp.type.UserWhereUniqueInput;
 import com.example.learningapp.Apollo;
 import com.example.learningapp.R;
-
-import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
 
@@ -33,20 +24,20 @@ public class ProfileFragment extends Fragment {
         TextView emailTextView = root.findViewById(R.id.fragment_profile_email_textView);
         TextView nameTextView = root.findViewById(R.id.fragment_profile_name_textView);
         Button logoutButton = root.findViewById(R.id.fragment_profile_logout_button);
-        Apollo apollo = new Apollo(requireContext(),requireActivity());
+        Apollo apollo = new Apollo(requireContext(), requireActivity());
         apollo.checkIsLoginWithAction();
         textView.setText("我的");
-        if (apollo.isNetworkAvailable()){
+        if (apollo.isNetworkAvailable()) {
             UserQuery.User user = apollo.getUser();
             emailTextView.setText(user.email());
             nameTextView.setText(user.name());
             logoutButton.setOnClickListener(v -> {
-                apollo.setDefaults("email",null);
+                apollo.setDefaults("email", null);
                 requireActivity().recreate();
-                NavController navController = Navigation.findNavController(requireActivity(),R.id.main_nav_host_fragment);
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
                 navController.navigate(R.id.loginFragment);
             });
-        }else{
+        } else {
             textView.setText("請檢查網絡連接");
         }
 

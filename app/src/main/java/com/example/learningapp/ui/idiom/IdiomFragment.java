@@ -1,32 +1,24 @@
 package com.example.learningapp.ui.idiom;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.rx3.Rx3Apollo;
-import com.example.LearningApp.DynastiesQuery;
 import com.example.LearningApp.DynastyQuery;
 import com.example.LearningApp.type.DynastyWhereUniqueInput;
 import com.example.learningapp.Apollo;
 import com.example.learningapp.R;
-import com.example.learningapp.ui.home.HomeFragmentDirections;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,27 +29,26 @@ public class IdiomFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_idiom, container, false);
         TextView textView = root.findViewById(R.id.fragment_idiom_textview);
         LinearLayout linearLayout = root.findViewById(R.id.fragment_idiom_scrollView_layout);
-        Apollo apollo = new Apollo(requireContext(),requireActivity());
+        Apollo apollo = new Apollo(requireContext(), requireActivity());
         apollo.checkIsLoginWithAction();
         if (getArguments() != null) {
             IdiomFragmentArgs fragmentArgs = IdiomFragmentArgs.fromBundle(getArguments());
             String dynastyCode = fragmentArgs.getDynastyCode();
-            if(apollo.isNetworkAvailable()){
+            if (apollo.isNetworkAvailable()) {
                 DynastyWhereUniqueInput where = DynastyWhereUniqueInput.builder().code(dynastyCode).build();
-                DynastyQuery dynastyQuery =  DynastyQuery.builder().where(where).build();
+                DynastyQuery dynastyQuery = DynastyQuery.builder().where(where).build();
                 ApolloCall<DynastyQuery.Data> apolloCall = apollo.getApolloClient().query(dynastyQuery);
                 Response<DynastyQuery.Data> response = Rx3Apollo.from(apolloCall).blockingFirst();
                 DynastyQuery.Dynasty dynasty = Objects.requireNonNull(response.getData()).dynasty();
                 List<DynastyQuery.Idiom> idioms = dynasty.idioms();
-                Log.i("Apollo", "Data: " + dynasty);
 
                 getActivity().runOnUiThread(() -> {
                     textView.setText(dynasty.dynastyName());
                     for (int i = 0; i < idioms.size(); i++) {
-                        addCardView(linearLayout, idioms.get(i).idiom(),idioms.get(i).description(),  root);
+                        addCardView(linearLayout, idioms.get(i).idiom(), idioms.get(i).description(), root);
                     }
                 });
-            }else{
+            } else {
                 textView.setText("請檢查網絡連接");
             }
         }
@@ -65,7 +56,7 @@ public class IdiomFragment extends Fragment {
         return root;
     }
 
-    private void addCardView(LinearLayout linearLayout, String title, String content,  View view) {
+    private void addCardView(LinearLayout linearLayout, String title, String content, View view) {
         LinearLayout cardLinearLayout = new LinearLayout(view.getContext());
         cardLinearLayout.setOrientation(LinearLayout.VERTICAL);
         LinearLayout cardLinearLayoutRow = new LinearLayout(view.getContext());
@@ -97,7 +88,7 @@ public class IdiomFragment extends Fragment {
     private TextView addContentTextView(String content, View view) {
         TextView textView = new TextView(view.getContext());
         textView.setText(content);
-        textView.setPadding(0,16,0,0);
+        textView.setPadding(0, 16, 0, 0);
         return textView;
     }
 }
